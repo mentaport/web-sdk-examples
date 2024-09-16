@@ -7,8 +7,9 @@
 Inside *src/app/actions/mentaport*, you will find how to initialize the SDK, call all the main functions, and visualize the results.
 > Make sure you add your API Key in the .env 
 </br ></br >
-> Also add a contractId. If you dont know it, you can get it from the *GetContractId Tab* 
+> Also add a contractId. If you dont know it, you can get it from the *Get ContractId Tab* 
 
+![alt text](example-view.png)
 
 Run the development server:
 ```bash
