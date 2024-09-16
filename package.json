@@ -1,6 +1,14 @@
 {
   "name": "@mentaport/web-sdk-examples",
   "private": true,
+  "author": "Mentaport",
+  "description": "Mentaport certificates SDK examples.",
+  "scripts": {
+    "build": "lerna run build",
+    "clean": "lerna run clean",
+    "lint": "lerna run lint",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "workspaces": [
     "packages/*"
   ],

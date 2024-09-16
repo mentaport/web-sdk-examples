@@ -9,9 +9,10 @@ import {
 
 const getFileTypeStr = (fileType: string) => {
   const types = fileType.split('/');
-  // const type: ContentTypes = ContentTypes[types[0] as keyof typeof ContentTypes];
   let type = ""
-  const format: ContentFormat = ContentFormat[types[1] as keyof typeof ContentFormat];
+  let format: ContentFormat = ContentFormat[types[1] as keyof typeof ContentFormat];
+  if(!format && types[1] == 'jpeg')
+    format = ContentFormat.jpg;
   for (const key in ContentTypes) {
     if (ContentTypes[key as keyof typeof ContentTypes].toLowerCase() === types[0]) {
       type =  ContentTypes[key as keyof typeof ContentTypes];
@@ -24,7 +25,6 @@ const getFileTypeStr = (fileType: string) => {
 // Create new certificate
 export async function Create(data: FormData, initCertificateArgs:ICertificateArg) {
   try {
-   
     const file: File | null = data.get('file') as unknown as File
     if (!file) {
       throw new Error('No file uploaded')
@@ -34,7 +34,7 @@ export async function Create(data: FormData, initCertificateArgs:ICertificateArg
     const blob = new Blob([buffer], { type: file.type });
     const typeInfo = getFileTypeStr(file.type)
     initCertificateArgs.contentType = typeInfo.type as ContentTypes;
-    
+
     const sdk = await _getMentaportSDK();
     const initResult = await sdk.initCertificate(initCertificateArgs);
    

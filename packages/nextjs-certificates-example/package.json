@@ -1,6 +1,8 @@
 {
   "name": "@mentaport/nextjs-certificates-example",
   "version": "0.1.0",
+  "description": "Mentaport certificates SDK example (nextjs).",
+  "author": "Mentaport",
   "private": true,
   "scripts": {
     "dev": "next dev",
