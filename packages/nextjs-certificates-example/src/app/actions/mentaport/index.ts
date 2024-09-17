@@ -4,6 +4,8 @@ import {
   ICertificateArg,
   ContentTypes, 
   ContentFormat,
+  ICertificate,
+  IResults
 } from '@mentaport/certificates';
 
 
@@ -23,7 +25,7 @@ const getFileTypeStr = (fileType: string) => {
 };
 
 // Create new certificate
-export async function Create(data: FormData, initCertificateArgs:ICertificateArg) {
+export async function Create(data: FormData, initCertificateArgs:ICertificateArg):Promise<IResults<ICertificate>> {
   try {
     const file: File | null = data.get('file') as unknown as File
     if (!file) {
@@ -40,7 +42,7 @@ export async function Create(data: FormData, initCertificateArgs:ICertificateArg
    
     if(!initResult.status || !initResult.data) {
       console.error('There was a problem creating the certificate')
-      return initResult
+      return {status:false, statusCode: initResult.statusCode, message:initResult.message}
     }
     console.log("now uploading content")
     const certId = initResult.data.certId;
@@ -66,7 +68,7 @@ export async function Create(data: FormData, initCertificateArgs:ICertificateArg
     if(error.response && error.response.data ){
       message = error.response.data.message
     }
-    return {status:false, message,data:null}
+    return {status:false, message, statusCode:501}
   }
 }
 
@@ -92,7 +94,7 @@ export async function Verify(data: FormData) {
     if(error.response && error.response.data ){
       message = error.response.data.message
     }
-    return {status:false, message,data:null}
+    return {status:false, message, statusCode:501}
   }
 }
 
@@ -116,7 +118,7 @@ export async function GetCertificates(contractId?:string, certId?:string) {
       message = error.response.data.message
     }
     console.log(error)
-    return {status:false, message, data:null}
+    return {status:false, message, statusCode:501}
   }
 }
 
@@ -134,6 +136,6 @@ export async function GetContracts(activeContracts:boolean) {
       message = error.response.data.message
     }
     console.log(error)
-    return {status:false, message, data:null}
+    return {status:false, message, statusCode:501}
   }
 }

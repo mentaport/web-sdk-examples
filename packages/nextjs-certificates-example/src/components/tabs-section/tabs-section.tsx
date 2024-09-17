@@ -2,6 +2,8 @@
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import {Box,Flex,Text, Code, Button ,Stack, Input } from '@chakra-ui/react'
 import {Create, Verify, GetCertificates, GetContracts } from '@/app/actions/mentaport/index'
+import {DownloadButton} from '@/components/buttons/download-button'
+
 import './tabs-section.scss';
 
 import {
@@ -36,8 +38,10 @@ interface ButtonProps {
 }
 export const TabsSection = () => {
   const onlyActiveContracts = true;
- 
+  
   const [loading, setOnLoading] = useState<boolean>(false);
+  const [downloadUrl, setDownloadUrl] = useState<string>();
+
   const [result, setResult] = useState<string>('Results:');
   const [certId, setCertId] = useState<string>("certId");
   const handleCertIdChange = (event:React.ChangeEvent<HTMLInputElement>) => setCertId(event.target.value)
@@ -50,11 +54,14 @@ export const TabsSection = () => {
 
   async function uploadCreateClient(data: FormData ) {
     setResult('')
+    setDownloadUrl('')
     setOnLoading(true)
     const res =  await Create(data, newCert)
     setOnLoading(false)
     if(res.status && res.data) {
       setResult(JSON.stringify(res.data, null, 2))
+     if( res.data.watermarkUrl)
+        setDownloadUrl( res.data.watermarkUrl)
     }
     else {
       setResult(res.message)
@@ -63,12 +70,20 @@ export const TabsSection = () => {
   async function uploadVerifyClient(data: FormData ) {
     setResult('')
     setOnLoading(true)
+    // Get current time in milliseconds
+    const startTime = new Date().getTime(); 
+
     const res = await Verify(data)
     setOnLoading(false)
     if(res.status)
       setResult(JSON.stringify(res.data, null, 2))
     else 
       setResult(res.message)
+
+    const endTime = new Date().getTime();
+    // Calculate execution time in milliseconds
+    const executionTime = endTime - startTime; 
+    console.log('executionTime',executionTime)
   }
 
   async function GetCertificatesClient(contractId?:string, certId?:string) {
@@ -117,15 +132,18 @@ export const TabsSection = () => {
               <Code> await mentaportSdk.initCertificate(initCertificateArgs);</Code>
               <Code> await mentaportSdk.generateCertificate(contractId, certId, contentFormat, blob);</Code>
               <Code> await mentaportSdk.approveCertificate(contractId, certId, approve:boolean);</Code>
-              {/* <input type="file" onChange={handleFileInputChange} /> */}
+            
               <form action={uploadCreateClient}>
                 <Text>ContractId</Text>
                 <Input placeholder='contractId' value={contractId} onChange={handleContractIdChange} />
                 <input type="file" name="file" />
                 <SubmitButton name="Create"/>
-                {/* <Button colorScheme='purple' type="submit" isLoading={loading}>Create</Button> */}
               </form>
             </Stack>
+
+             {downloadUrl && downloadUrl.length >1 &&
+              <DownloadButton url={downloadUrl} />
+              }
           </Box>
         </TabPanel>
         <TabPanel>
@@ -138,7 +156,6 @@ export const TabsSection = () => {
                <form action={uploadVerifyClient}>
                 <input type="file" name="file" />
                 <SubmitButton name="Verify"/>
-                {/* <Button colorScheme='purple' type="submit" isLoading={loading}>Verify</Button> */}
               </form>
             </Stack>
           </Box>
