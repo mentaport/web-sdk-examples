@@ -25,8 +25,9 @@ const getFileTypeStr = (fileType: string) => {
 };
 
 // Create new certificate
-export async function Create(data: FormData, initCertificateArgs:ICertificateArg):Promise<IResults<ICertificate>> {
+export async function CreateCertificate(data: FormData, initCertificateArgs:ICertificateArg):Promise<IResults<ICertificate>> {
   try {
+ 
     const file: File | null = data.get('file') as unknown as File
     if (!file) {
       throw new Error('No file uploaded')
@@ -44,8 +45,9 @@ export async function Create(data: FormData, initCertificateArgs:ICertificateArg
       console.error('There was a problem creating the certificate')
       return {status:false, statusCode: initResult.statusCode, message:initResult.message}
     }
-    console.log("now uploading content")
+    console.log("now uploading content", initResult)
     const certId = initResult.data.certId;
+    console.log(certId, typeInfo.format)
     // generate
     const genRes = await sdk.generateCertificate(
       initCertificateArgs.contractId,
@@ -53,6 +55,7 @@ export async function Create(data: FormData, initCertificateArgs:ICertificateArg
       typeInfo.format as ContentFormat,
       blob
     );
+
     if(!genRes.status){
       console.error('There was a problem uploading contnet for certificate')
       return genRes
@@ -64,6 +67,7 @@ export async function Create(data: FormData, initCertificateArgs:ICertificateArg
     
   } // eslint-disable-next-line @typescript-eslint/no-explicit-any
   catch(error:any) {
+    console.log(error)
     let message = "Error creating certificate"
     if(error.response && error.response.data ){
       message = error.response.data.message
@@ -137,5 +141,25 @@ export async function GetContracts(activeContracts:boolean) {
     }
     console.log(error)
     return {status:false, message, statusCode:501}
+  }
+}
+
+export async function GetDownloadUrl(
+  contractId: string,
+  certId: string,
+  contentFormat: ContentFormat
+): Promise<IResults<string>> {
+  try {
+    const sdk = await _getMentaportSDK();
+    const result = await sdk.getDownloadUrl(contractId, certId, contentFormat);
+    return result;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    let message = 'Error getting contracts';
+    if (error.response && error.response.data) {
+      message = error.response.data.message;
+    }
+    console.log(error);
+    return { status: false, message, statusCode: 501 };
   }
 }

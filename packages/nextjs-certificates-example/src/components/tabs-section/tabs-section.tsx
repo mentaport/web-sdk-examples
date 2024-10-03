@@ -1,12 +1,13 @@
 'use client'
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
 import {Box,Flex,Text, Code, Button ,Stack, Input } from '@chakra-ui/react'
-import {Create, Verify, GetCertificates, GetContracts } from '@/app/actions/mentaport/index'
+import {CreateCertificate, Verify, GetCertificates, GetContracts } from '@/app/actions/mentaport/index'
 import {DownloadButton} from '@/components/buttons/download-button'
 
 import './tabs-section.scss';
 
 import {
+  ContentFormat,
   ICertificateArg,
   ContentTypes,
   CopyrightInfo,
@@ -36,32 +37,48 @@ let newCert:ICertificateArg = {
 interface ButtonProps {
   name: string
 }
+interface DownlaodProps {
+  contractId: string;
+  certId:string;
+  contentFormat:ContentFormat
+}
 export const TabsSection = () => {
   const onlyActiveContracts = true;
   
   const [loading, setOnLoading] = useState<boolean>(false);
-  const [downloadUrl, setDownloadUrl] = useState<string>();
+  const [downloadUrl, setDownloadUrl] = useState<DownlaodProps|null>(null);
 
   const [result, setResult] = useState<string>('Results:');
   const [certId, setCertId] = useState<string>("certId");
-  const handleCertIdChange = (event:React.ChangeEvent<HTMLInputElement>) => setCertId(event.target.value)
   const [contractId, setContractId] = useState<string>(process.env.NEXT_PUBLIC_CONTRACT_ID!);
+
+  const handleCertIdChange = (event:React.ChangeEvent<HTMLInputElement>) => {
+    setCertId(event.target.value)
+    setResult('')
+  }
   
   const handleContractIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setResult('')
     setContractId(event.target.value)
     newCert.contractId = event.target.value
   }
 
   async function uploadCreateClient(data: FormData ) {
     setResult('')
-    setDownloadUrl('')
+    setDownloadUrl(null)
     setOnLoading(true)
-    const res =  await Create(data, newCert)
+   
+    const res = await CreateCertificate(data, newCert)
     setOnLoading(false)
     if(res.status && res.data) {
+
       setResult(JSON.stringify(res.data, null, 2))
-     if( res.data.watermarkUrl)
-        setDownloadUrl( res.data.watermarkUrl)
+      setDownloadUrl(
+        {
+        contractId:res.data!.contractId,
+        certId:res.data!.certId,
+        contentFormat:res.data!.contentFormat!,
+        })
     }
     else {
       setResult(res.message)
@@ -85,7 +102,6 @@ export const TabsSection = () => {
     const executionTime = endTime - startTime; 
     console.log('executionTime',executionTime)
   }
-
   async function GetCertificatesClient(contractId?:string, certId?:string) {
     setResult('')
     setOnLoading(true)
@@ -106,7 +122,10 @@ export const TabsSection = () => {
     else 
       setResult(res.message)
   }
- 
+ function handleTabChange() {
+  console.log("change")
+  setResult("Results:")
+ }
   const SubmitButton:FunctionComponent<ButtonProps> = props => {
     const { pending } = useFormStatus();
     return (
@@ -116,8 +135,8 @@ export const TabsSection = () => {
 
   return (
     <>
-    <Tabs variant='enclosed' colorScheme='purple'>
-      <TabList>
+    <Tabs variant='enclosed' colorScheme='purple' onChange={()=>handleTabChange()}>
+      <TabList >
         <Tab>Create Certificate</Tab>
         <Tab>Verify Content</Tab>
         <Tab>Get Certificates</Tab>
@@ -137,12 +156,12 @@ export const TabsSection = () => {
                 <Text>ContractId</Text>
                 <Input placeholder='contractId' value={contractId} onChange={handleContractIdChange} />
                 <input type="file" name="file" />
-                <SubmitButton name="Create"/>
+                <SubmitButton name="Create Certificate"/>
               </form>
             </Stack>
 
-             {downloadUrl && downloadUrl.length >1 &&
-              <DownloadButton url={downloadUrl} />
+             {downloadUrl &&
+              <DownloadButton contractId={downloadUrl.contractId} certId={downloadUrl.certId} contentFormat ={downloadUrl.contentFormat} />
               }
           </Box>
         </TabPanel>

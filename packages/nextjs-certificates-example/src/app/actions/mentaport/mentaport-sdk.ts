@@ -17,7 +17,7 @@ async function _initMentaportSdk() {
       'It is not possible to create a CertificateSDK due to an initialization problem.'
     );
   }
-  //_mentaportSDK.setClientEnv(Environment.DEVELOPMENT);
+  // _mentaportSDK.setClientEnv(Environment.DEVELOPMENT);
   _mentaportSDK.setClientEnv(Environment.STAGING);
   //_mentaportSDK.setClientEnv( Environment.PRODUCTION);
   return _mentaportSDK;
