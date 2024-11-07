@@ -10,7 +10,6 @@ import {
   ContentFormat,
   ICertificateArg,
   ContentTypes,
-  CopyrightInfo,
   AITrainingMiningInfo
 } from '@mentaport/certificates';
 import {  useState, FunctionComponent } from 'react';
@@ -25,7 +24,6 @@ let newCert:ICertificateArg = {
   username: "MentaportDev",
   description: "This certifcate was created to test the sdk example",
   usingAI: false,
-  copyrightInfo: CopyrightInfo.Copyrighted,
   aiTrainingMiningInfo: AITrainingMiningInfo.NotAllowed
   // aiSoftware?: string;
   // aiModel?: string;
@@ -61,8 +59,9 @@ export const TabsSection = () => {
     setResult('')
     setContractId(event.target.value)
     newCert.contractId = event.target.value
+    
   }
-
+  
   async function uploadCreateClient(data: FormData ) {
     setResult('')
     setDownloadUrl(null)
@@ -71,7 +70,6 @@ export const TabsSection = () => {
     const res = await CreateCertificate(data, newCert)
     setOnLoading(false)
     if(res.status && res.data) {
-
       setResult(JSON.stringify(res.data, null, 2))
       setDownloadUrl(
         {
@@ -92,9 +90,9 @@ export const TabsSection = () => {
 
     const res = await Verify(data)
     setOnLoading(false)
-    if(res.status)
+    if(res && res.status)
       setResult(JSON.stringify(res.data, null, 2))
-    else 
+    else if(res)
       setResult(res.message)
 
     const endTime = new Date().getTime();
@@ -147,10 +145,12 @@ export const TabsSection = () => {
           <Box className="MainBoxWrapper" >
             <Stack spacing={4} direction='column' align='left'>
               <Text fontSize='3xl'>Creating new Certificate</Text>
-              <Text fontSize='md'>{"Initialize info -> upload content -> approve"}</Text>
-              <Code> await mentaportSdk.initCertificate(initCertificateArgs);</Code>
-              <Code> await mentaportSdk.generateCertificate(contractId, certId, contentFormat, blob);</Code>
-              <Code> await mentaportSdk.approveCertificate(contractId, certId, approve:boolean);</Code>
+              <Text fontSize='md'>{"Initialize info -> Upload content -> Get status -> Approve"}</Text>
+              <Code> certId = await mentaportSdk.initCertificate(initCertificateArgs);</Code>
+              <Code> await mentaportSdk.createCertificate(contractId, certId, contentFormat, blob);</Code>
+              <Code> await mentaportSdk.getCertificateStatus(contractId, certId);</Code>
+
+              <Code> certificate = await mentaportSdk.approveCertificate(contractId, certId, approve:boolean);</Code>
             
               <form action={uploadCreateClient}>
                 <Text>ContractId</Text>
@@ -168,10 +168,10 @@ export const TabsSection = () => {
         <TabPanel>
           <Box className="MainBoxWrapper" >
             <Stack spacing={4} direction='column' align='left'>
-              <Text fontSize='3xl'>Verify Content (images, audio)</Text>
-              <Text fontSize='md'> {"Upload content -> Check certificate (report if neede)"}</Text>
-              <Code> await mentaportSdk.verifyContent(contentFormat, blob);</Code>
-              <Code> await mentaportSdk.verifyContentPresignURL(contentFormat, blob); //For big files</Code>
+              <Text fontSize='3xl'>Verify Content (images, audio, video (comming soon))</Text>
+              <Text fontSize='md'> {"Upload content -> Check status -> Get certificate (report if needed)"}</Text>
+              <Code> verId = await mentaportSdk.verifyContent(contentFormat, blob);</Code>
+              <Code> await mentaportSdk.getVerificationStatus(verId); </Code>
                <form action={uploadVerifyClient}>
                 <input type="file" name="file" />
                 <SubmitButton name="Verify"/>
@@ -195,12 +195,12 @@ export const TabsSection = () => {
               <Stack spacing={4} direction='column' align='left'>
               <Text fontSize='3xl'>Get Certificate</Text>
               <Text fontSize='md'> {"Get certificate by id"}</Text>
-              <Code> await mentaportSdk.getCertificate(contractId, certId); </Code>
+              <Code> await mentaportSdk.getCertificates(contractId, certId); </Code>
               <Text>ContractId</Text>
               <Input placeholder='contractId' value={contractId} onChange={handleContractIdChange} />
               <Text>CertId</Text>
               <Input placeholder='certId' value={certId} onChange={handleCertIdChange} />
-              <Button colorScheme='purple' onClick={()=>GetCertificatesClient(process.env.NEXT_PUBLIC_CONTRACT_ID, certId)} isLoading={loading}>Get Certificates</Button>
+              <Button colorScheme='purple' onClick={()=>GetCertificatesClient(contractId, certId)} isLoading={loading}>Get Certificates</Button>
               </Stack>
             </Box>
           </Flex>
