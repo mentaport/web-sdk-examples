@@ -7,7 +7,7 @@
 
 Inside *src/app/actions/mentaport*, you will find how to initialize the SDK, call all the main functions, and visualize the results.
 
->*SDK Version: `1.1.8-alpha.6`*
+>*SDK Version: `1.1.9`*
 >
 >Make sure to add your **API Key** in the *.env*  
 > Add a `contractId`. If you're unsure, find it under the Get *ContractId Tab*

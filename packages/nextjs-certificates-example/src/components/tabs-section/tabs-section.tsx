@@ -9,7 +9,6 @@ import './tabs-section.scss';
 import {
   ContentFormat,
   ICertificateArg,
-  ContentTypes,
   AITrainingMiningInfo
 } from '@mentaport/certificates';
 import {  useState, FunctionComponent } from 'react';
@@ -19,7 +18,7 @@ import { useFormStatus } from "react-dom";
 // eslint-disable-next-line prefer-const
 let newCert:ICertificateArg = {
   contractId: process.env.NEXT_PUBLIC_CONTRACT_ID!, // "your-contract-id",
-  contentType: ContentTypes.Image,
+  contentFormat:ContentFormat.png,  // will be updated when file is selected
   name: "Certificate Example",
   username: "MentaportDev",
   description: "This certifcate was created to test the sdk example",
@@ -38,7 +37,6 @@ interface ButtonProps {
 interface DownlaodProps {
   contractId: string;
   certId:string;
-  contentFormat:ContentFormat
 }
 export const TabsSection = () => {
   const onlyActiveContracts = true;
@@ -59,7 +57,6 @@ export const TabsSection = () => {
     setResult('')
     setContractId(event.target.value)
     newCert.contractId = event.target.value
-    
   }
   
   async function uploadCreateClient(data: FormData ) {
@@ -74,8 +71,7 @@ export const TabsSection = () => {
       setDownloadUrl(
         {
         contractId:res.data!.contractId,
-        certId:res.data!.certId,
-        contentFormat:res.data!.contentFormat!,
+        certId:res.data!.certId
         })
     }
     else {
@@ -146,12 +142,12 @@ export const TabsSection = () => {
             <Stack spacing={4} direction='column' align='left'>
               <Text fontSize='3xl'>Creating new Certificate</Text>
               <Text fontSize='md'>{"Initialize info -> Upload content -> Get status -> Approve"}</Text>
-              <Code> certId = await mentaportSdk.initCertificate(initCertificateArgs);</Code>
-              <Code> await mentaportSdk.createCertificate(contractId, certId, contentFormat, blob);</Code>
+              <Code> await mentaportSdk.createCertificate(initCertificateArgs, blob);</Code>
               <Code> await mentaportSdk.getCertificateStatus(contractId, certId);</Code>
 
               <Code> certificate = await mentaportSdk.approveCertificate(contractId, certId, approve:boolean);</Code>
-            
+              <Code> url = await mentaportSdk.getDownloadUrl(contractId, certId);</Code>
+
               <form action={uploadCreateClient}>
                 <Text>ContractId</Text>
                 <Input placeholder='contractId' value={contractId} onChange={handleContractIdChange} />
@@ -161,7 +157,7 @@ export const TabsSection = () => {
             </Stack>
 
              {downloadUrl &&
-              <DownloadButton contractId={downloadUrl.contractId} certId={downloadUrl.certId} contentFormat ={downloadUrl.contentFormat} />
+              <DownloadButton contractId={downloadUrl.contractId} certId={downloadUrl.certId} />
               }
           </Box>
         </TabPanel>
