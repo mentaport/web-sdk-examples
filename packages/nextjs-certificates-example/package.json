@@ -14,7 +14,7 @@
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
-    "@mentaport/certificates": "^1.1.9",
+    "@mentaport/certificates": "^1.2.0-alpha.1",
     "framer-motion": "^11.5.4",
     "next": "14.2.11",
     "react": "^18",

@@ -50,7 +50,7 @@ export async function CreateCertificate(data: FormData, initCertificateArgs:ICer
     const contractId = initCertificateArgs.contractId;
     const certId = genRes.data.certId;
     let status = genRes.data.status;
-
+    console.log("creation started", certId)
     // 2. Check status until is ready (Pending if successful or NonActive if failed)
     let resCertStatus = await sdk.getCertificateStatus(contractId, certId);
     while (status !== CertificateStatus.Pending &&
@@ -58,19 +58,25 @@ export async function CreateCertificate(data: FormData, initCertificateArgs:ICer
     ) {
       await sleep(2000);
       resCertStatus = await sdk.getCertificateStatus(contractId, certId);
-
+      console.log(resCertStatus)
       if(!resCertStatus.status) {
         console.log('error', resCertStatus)
         return {status: resCertStatus.status, message: resCertStatus.message, statusCode: resCertStatus.statusCode}
       }
       if(resCertStatus.data) {
-        status = resCertStatus.data.status
+        if(resCertStatus.data.status.error) {
+          // break error creating certificate
+          console.log(resCertStatus)
+          return {status: false, message: resCertStatus.data.status.statusMessage, statusCode: resCertStatus.statusCode}
+        }
+        status = resCertStatus.data.status.status;
       }
     }
-    if(!resCertStatus!.status || resCertStatus.data?.status == CertificateStatus.NonActive ){
-      console.error('There was a problem creating your certificate')
-      return {status: resCertStatus.status, message: resCertStatus.message, statusCode: resCertStatus.statusCode}
-    }
+
+    // if(!resCertStatus!.status || resCertStatus.data?.status == CertificateStatus.NonActive ){
+    //   console.error('There was a problem creating your certificate')
+    //   return {status: resCertStatus.status, message: resCertStatus.message, statusCode: resCertStatus.statusCode}
+    // }
     console.log("Now approving certificate");
     // TODO: Before approving, confirm the data from the above call to ensure everything looks good.
     // 3. Approve certificate for it to be ready for download
@@ -102,7 +108,9 @@ export async function Verify(data: FormData) {
     const sdk = await _getMentaportSDK();
     const url = "http://examples.mentaport.com/upload";
     // 1. Verify content by uploading content
+    console.log("jer 1e")
     const verRes = await sdk.verifyContent(typeInfo.format, url, blob);
+    console.log('d',verRes)
     // check for result:
     if(!verRes.status || !verRes.data) { 
       return verRes
@@ -119,7 +127,7 @@ export async function Verify(data: FormData) {
       resVerStatus = await sdk.getVerificationStatus(verId);
       console.log(resVerStatus)
       if(resVerStatus.data) {
-        status = resVerStatus.data.status
+        status = resVerStatus.data.status.status
       }
     }
 
@@ -127,6 +135,7 @@ export async function Verify(data: FormData) {
 
   } // eslint-disable-next-line @typescript-eslint/no-explicit-any
   catch(error:any) {
+    console.log(error)
     let message = "Error verifying content"
     if(error.response && error.response.data ){
       message = error.response.data.message
@@ -139,11 +148,12 @@ export async function Verify(data: FormData) {
 export async function GetCertificates(contractId?:string, certId?:string) {
   try {
     const sdk = await _getMentaportSDK();
-    if(contractId) {
+    if(contractId && certId) {
       const result = await sdk.getCertificates(contractId, certId);
       console.log(result);
       return result
     }
+    console.log("here")
     const result = await sdk.getCertificates();
     console.log(result);
     return result

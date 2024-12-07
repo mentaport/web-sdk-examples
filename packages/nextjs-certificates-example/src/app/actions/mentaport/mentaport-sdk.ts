@@ -1,5 +1,5 @@
 'use server';
-import { CertificateSDK, Environment } from '@mentaport/certificates';
+import { CertificateSDK } from '@mentaport/certificates';
 
 let _mentaportSDK: CertificateSDK | null = null;
 
@@ -7,6 +7,7 @@ export async function _getMentaportSDK(): Promise<CertificateSDK> {
   if (_mentaportSDK != null) {
     return _mentaportSDK;
   }
+ 
   return await _initMentaportSdk();
 }
 
@@ -17,8 +18,7 @@ async function _initMentaportSdk() {
       'It is not possible to create a CertificateSDK due to an initialization problem.'
     );
   }
-  //_mentaportSDK.setClientEnv(Environment.DEVELOPMENT);
-  _mentaportSDK.setClientEnv(Environment.STAGING);
-  //_mentaportSDK.setClientEnv( Environment.PRODUCTION);
+
+  _mentaportSDK.setClient();
   return _mentaportSDK;
 }
