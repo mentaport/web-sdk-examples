@@ -1,5 +1,6 @@
 
 
+![logo](https://certificates.mentaport.com/_next/static/media/logo-menta.a1f4e18c.png)
 # Mentaport NextJS SDK Example
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app) showing example usage of Mentaport's official SDK.
@@ -9,8 +10,6 @@ You will find how to initialize the SDK, call all the main functions, and visual
 
 >Using SDK Version: [`1.2.0-alpha.1`](https://www.npmjs.com/package/@mentaport/certificates)
 >
-
-![alt text](img/example-view.png)
 
 ## Example Usage
 
