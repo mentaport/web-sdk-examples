@@ -5,7 +5,7 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app) showing example usage of Mentaport's official SDK.
 
 You will find how to initialize the SDK, call all the main functions, and visualize the results inside 
-`src/app/actions/mentaport`.
+`src/app/actions/mentaport`. Code for UI and input handling can be found inside `src/components/tab-section`.
 
 >Using SDK Version: [`1.2.0-alpha.1`](https://www.npmjs.com/package/@mentaport/certificates)
 >
@@ -97,13 +97,3 @@ To interact with the Example, open [http://localhost:3000](http://localhost:3000
 ## Support
 
 [Mentaport Documentation](https://docs.mentaport.com)
-## Usage/Examples
-
-```javascript
-import Component from 'my-project'
-
-function App() {
-  return <Component />
-}
-```
-
