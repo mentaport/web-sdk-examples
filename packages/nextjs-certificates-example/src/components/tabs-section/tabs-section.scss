@@ -1,7 +1,30 @@
 .MainBoxWrapper {
-  background: #63646431;
-  border-radius: 15px;
+  background: hsla(0, 0%, 89%, 0.729);
+  border: 1px solid hsla(0, 0%, 100%, 0.791);
+  border-radius: 1rem;
   width: 100%;
-  padding: 1rem,
+  padding: 1.2rem;
+  color: "darkslategray";
+}
 
+.CodeWrapper {
+  background: white !important;
+}
+
+.CodeStackWrapper {
+  background: white !important;
+  padding: 1rem;
+  border-radius: 0.3rem;
+}
+
+.InputWrapper {
+  background: rgba(255, 255, 255, 0.868) !important;
+  border-radius: 0.3rem;
+  height: 38px;
+  padding-top: 5px;
+
+  // placeholder color should be gray
+  input::placeholder {
+    color: slategray;
+  }
 }
