@@ -365,14 +365,15 @@ export const TabsSection = () => {
                   <SubmitButton name="Create Certificate" />
                 </Stack>
               </form>
+              {downloadUrl && (
+                <DownloadButton
+                  contractId={downloadUrl.contractId}
+                  certId={downloadUrl.certId}
+                  contentFormat={newCertificateArgs.contentFormat}
+                />
+              )}
             </Stack>
 
-            {downloadUrl && (
-              <DownloadButton
-                contractId={downloadUrl.contractId}
-                certId={downloadUrl.certId}
-              />
-            )}
           </Box>
         ),
       },
