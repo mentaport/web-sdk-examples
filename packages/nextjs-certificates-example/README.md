@@ -9,7 +9,44 @@ You will find how to initialize the SDK, call all the main functions, and visual
 `src/app/actions/mentaport`. Code for UI and input handling can be found inside `src/components/tab-section`.
 
 >Using SDK Version: [`1.2.0-alpha.1`](https://www.npmjs.com/package/@mentaport/certificates)
->
+>NodeJS: v18.0+
+
+## Environment Variables
+
+To run this project properly, you will need to add the following environment variables to your `.env` file. You can get all variables from your Settings Page in the Mentaport Certificate App website.
+
+```
+NEXT_MENTAPORT_API=your_api_key
+NEXT_PUBLIC_CONTRACT_ID=your_contract_id
+```
+
+
+## Run the Example Locally
+
+Go to the project directory
+
+```bash
+  cd packages/nextjs-certificates-example
+```
+
+Install dependencies
+
+```bash
+  npm install
+    # or
+  yarn install
+```
+
+
+Start the server
+
+```bash
+  npm run dev
+    # or
+  yarn dev
+```
+
+To interact with the Example, open [http://localhost:3000](http://localhost:3000) with your browser. 
 
 ## Example Usage
 
@@ -53,44 +90,6 @@ This example demonstates an example usage and results of selecting a local file 
 This example demonstates an example usage and results of fetching for the existing user's contracts based on the API key.
 
 ![fetch contracts example](img/example-contracts.png)
-
-
-## Environment Variables
-
-To run this project properly, you will need to add the following environment variables to your `.env` file. You can get all variables from your Settings Page in the Mentaport Certificate App website.
-
-```
-NEXT_MENTAPORT_API=your_api_key
-NEXT_PUBLIC_CONTRACT_ID=your_contract_id
-```
-
-
-## Run the Example Locally
-
-Go to the project directory
-
-```bash
-  cd packages/nextjs-certificates-example
-```
-
-Install dependencies
-
-```bash
-  npm install
-    # or
-  yarn install
-```
-
-
-Start the server
-
-```bash
-  npm run dev
-    # or
-  yarn dev
-```
-
-To interact with the Example, open [http://localhost:3000](http://localhost:3000) with your browser. 
 
 
 ## Support
