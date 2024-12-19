@@ -9,11 +9,11 @@ export default function Home() {
     <div className={styles.page}>
       <HeaderBar />
       <main className={styles.main}>
-      <TabsSection />
+        <TabsSection />
       </main>
-      <footer className="footer">
-        <p>Copyright © Mentaport Inc 2024.</p>
-    </footer>
+      <footer className={styles.footer}>
+        <p>© 2024 Mentaport Inc. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
