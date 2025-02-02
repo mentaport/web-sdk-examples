@@ -5,12 +5,12 @@ import "./download-button.scss"
 import { ContentFormat } from '@mentaport/certificates';
 
 export interface ButtonProps {
-  contractId: string;
+  projectId: string;
   certId: string;
   contentFormat?: ContentFormat;
 }
 export const DownloadButton: FunctionComponent<ButtonProps> = ({
-  contractId,
+  projectId,
   certId,
   contentFormat,
 }) => {
@@ -27,7 +27,7 @@ export const DownloadButton: FunctionComponent<ButtonProps> = ({
 
   const handleDownload = async () => {
     setOnLoading(true)
-    const urlRes = await GetDownloadUrl(contractId, certId)
+    const urlRes = await GetDownloadUrl(projectId, certId)
     if (urlRes.status) {
       const link = document.createElement('a');
       link.href = urlRes.data!;

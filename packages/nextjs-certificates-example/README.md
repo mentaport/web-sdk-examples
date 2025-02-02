@@ -9,7 +9,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 You will find how to initialize the SDK, call all the main functions, and visualize the results inside
 `src/app/actions/mentaport`. Code for UI and input handling can be found inside `src/components/tab-section`.
 
-> Using SDK Version: [`1.2.0-alpha.1`](https://www.npmjs.com/package/@mentaport/certificates)
+> Using Latest SDK Version: [`1.3.0-alpha.1`](https://www.npmjs.com/package/@mentaport/certificates)
 > NodeJS: v18.0+
 
 ## Environment Variables
@@ -18,7 +18,7 @@ To run this project properly, you will need to add the following environment var
 
 ```
 NEXT_MENTAPORT_API=your_api_key
-NEXT_PUBLIC_CONTRACT_ID=your_contract_id
+NEXT_PUBLIC_PROJECT_ID=your_project_id
 ```
 
 ## Run the Example Locally
@@ -55,11 +55,11 @@ There are 5 SDK usage examples to interact with.
     2, Update a Failed/Non-Active Certificate
     3. Fetch Existing Certificate(s)
     4. Verify Downloaded Content
-    5. Fetch My Contract(s)
+    5. Fetch My Project(s)
 
 #### Creating a New Certificate
 
-This example lets you interact will all required and optional parameters to create a new certificate using your contract ID and API Key.
+This example lets you interact will all required and optional parameters to create a new certificate using your project ID and API Key.
 
 ![create certificate example](img/example-create.png)
 
@@ -81,11 +81,11 @@ This example demonstates an example usage and results of selecting a local file 
 
 ![verify local content example](img/example-verification.png)
 
-### Fetching A User's Contract(s)
+### Fetching A User's Projects(s)
 
-This example demonstates an example usage and results of fetching for the existing user's contracts based on the API key.
+This example demonstates an example usage and results of fetching for the existing user's projects based on the API key.
 
-![fetch contracts example](img/example-contracts.png)
+![fetch projects example](img/example-projects.png)
 
 ## Support
 

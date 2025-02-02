@@ -8,12 +8,12 @@ import {
   SimpleGrid,
   Select,
 } from "@chakra-ui/react";
-import { Box, Flex, Text, Code, Button, Stack, Input } from "@chakra-ui/react";
+import { Box, Text, Code, Button, Stack, Input } from "@chakra-ui/react";
 import {
   CreateCertificate,
   Verify,
   GetCertificates,
-  GetContracts,
+  GetProjects,
   UpdateCertificate,
 } from "@/app/actions/mentaport/index";
 import { DownloadButton } from "@/components/buttons/download-button";
@@ -24,21 +24,19 @@ import {
   ContentFormat,
   ICertificateArg,
   AITrainingMiningInfo,
-  ICertificate,
   ICertificateUpdateArg,
 } from "@mentaport/certificates";
 import {
   useState,
   FunctionComponent,
-  useEffect,
-  ReactNode,
+  // useEffect,
   useMemo,
 } from "react";
 import { useFormStatus } from "react-dom";
 
 // eslint-disable-next-line prefer-const
 let newCert: ICertificateArg = {
-  contractId: process.env.NEXT_PUBLIC_CONTRACT_ID!, // "your-contract-id",
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID!, // "your-project-id",
   aiTrainingMiningInfo: AITrainingMiningInfo.NotAllowed,
   contentFormat: ContentFormat.png, // will be updated when file is selected
   name: "Certificate Example",
@@ -52,9 +50,9 @@ let newCert: ICertificateArg = {
   city: "",
   country: "",
 };
-
+// eslint-disable-next-line prefer-const
 let updateCert: ICertificateUpdateArg = {
-  contractId: process.env.NEXT_PUBLIC_CONTRACT_ID || "",
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID || "",
   certId: "",
   aiTrainingMiningInfo: AITrainingMiningInfo.NotAllowed,
   contentFormat: ContentFormat.png,
@@ -74,7 +72,7 @@ interface ButtonProps {
   name: string;
 }
 interface DownlaodProps {
-  contractId: string;
+  projectId: string;
   certId: string;
 }
 export const TabsSection = () => {
@@ -83,10 +81,10 @@ export const TabsSection = () => {
 
   const [result, setResult] = useState<string>("");
   const [certId, setCertId] = useState<string>("");
-  const [contractId, setContractId] = useState<string>(
-    process.env.NEXT_PUBLIC_CONTRACT_ID!
+  const [projectId, setProjectId] = useState<string>(
+    process.env.NEXT_PUBLIC_PROJECT_ID!
   );
-  const [onlyActiveContracts, setOnlyActiveContracts] = useState<boolean>(true);
+  const [onlyActiveProjects, setOnlyActiveProjects] = useState<boolean>(true);
   const [newCertificateArgs, setNewCertificateArgs] = useState<ICertificateArg>(
     { ...newCert }
   );
@@ -102,24 +100,24 @@ export const TabsSection = () => {
     });
   };
 
-  const handleContractIdChange = (
+  const handleProjectIdChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setResult("");
-    setContractId(event.target.value);
+    setProjectId(event.target.value);
     setNewCertificateArgs({
       ...newCertificateArgs,
-      contractId: event.target.value,
+      projectId: event.target.value,
     });
     setUpdateCertificateArgs({
       ...updateCertificateArgs,
-      contractId: event.target.value,
+      projectId: event.target.value,
     });
   };
 
   function handleTabChange() {
     setResult("");
-    setContractId(process.env.NEXT_PUBLIC_CONTRACT_ID || "");
+    setProjectId(process.env.NEXT_PUBLIC_PROJECT_ID || "");
     setCertId("");
     setNewCertificateArgs({ ...newCert });
     setUpdateCertificateArgs({ ...updateCert });
@@ -137,7 +135,7 @@ export const TabsSection = () => {
     if (status && resData) {
       setResult(JSON.stringify(resData, null, 2));
       setDownloadUrl({
-        contractId: resData!.contractId,
+        projectId: resData!.projectId,
         certId: resData!.certId,
       });
     } else {
@@ -156,7 +154,7 @@ export const TabsSection = () => {
     if (status && resData) {
       setResult(JSON.stringify(resData, null, 2));
       setDownloadUrl({
-        contractId: resData!.contractId,
+        projectId: resData!.projectId,
         certId: resData!.certId,
       });
     } else {
@@ -181,20 +179,20 @@ export const TabsSection = () => {
     console.log("executionTime", executionTime);
   }
   async function onGetCertificatesExample(
-    contractId?: string,
+    projectId?: string,
     certId?: string
   ) {
     setResult("");
     setOnLoading(true);
-    const res = await GetCertificates(contractId, certId);
+    const res = await GetCertificates(projectId, certId);
     setOnLoading(false);
     if (res.status) setResult(JSON.stringify(res.data, null, 2));
     else setResult(res.message);
   }
-  async function onGetContractsExample() {
+  async function onGetProjectsExample() {
     setResult("");
     setOnLoading(true);
-    const res = await GetContracts(onlyActiveContracts);
+    const res = await GetProjects(onlyActiveProjects);
     setOnLoading(false);
     if (res.status) setResult(JSON.stringify(res.data, null, 2));
     else setResult(res.message);
@@ -210,14 +208,14 @@ export const TabsSection = () => {
     );
   };
 
-  useEffect(() => {
-    console.log("updateCertificateArgs", updateCertificateArgs);
-  }, [updateCertificateArgs]);
+  // useEffect(() => {
+  //   console.log("updateCertificateArgs", updateCertificateArgs);
+  // }, [updateCertificateArgs]);
 
   const tabs: { tab: JSX.Element; tabPanel: JSX.Element }[] = useMemo(() => {
     return [
       {
-        tab: <Tab>Create Certificate</Tab>,
+        tab: <Tab key={0}>Create Certificate</Tab>,
         tabPanel: (
           <Box className="MainBoxWrapper">
             <Stack spacing={4} direction="column" align="left">
@@ -237,18 +235,18 @@ export const TabsSection = () => {
                 <Code className="CodeWrapper">
                   {" "}
                   const status = await
-                  mentaportSdk.getCertificateStatus(contractId: string,
+                  mentaportSdk.getCertificateStatus(projectId: string,
                   certificateId: string);
                 </Code>
                 <Code className="CodeWrapper">
                   {" "}
                   const certificate = await
-                  mentaportSdk.approveCertificate(contractId: string, certId:
+                  mentaportSdk.approveCertificate(projectId: string, certId:
                   string, approve: boolean);
                 </Code>
                 <Code className="CodeWrapper">
                   {" "}
-                  const url = await mentaportSdk.getDownloadUrl(contractId:
+                  const url = await mentaportSdk.getDownloadUrl(projectId:
                   string, certId: string);
                 </Code>
               </Stack>
@@ -260,14 +258,14 @@ export const TabsSection = () => {
                 <Stack spacing={4}>
                   <Stack spacing={1}>
                     <Text lineHeight={1}>
-                      Contract ID:<span style={{ color: "red" }}> *</span>
+                      Project ID:<span style={{ color: "red" }}> *</span>
                     </Text>
                     <Input
                       className="InputWrapper"
-                      title="Enter Your Contract ID"
-                      placeholder="Enter Your Contract ID"
-                      value={contractId}
-                      onChange={handleContractIdChange}
+                      title="Enter Your Project ID"
+                      placeholder="Enter Your Project ID"
+                      value={projectId}
+                      onChange={handleProjectIdChange}
                     />
                   </Stack>
                   <SimpleGrid columns={2} spacing={4}>
@@ -278,7 +276,7 @@ export const TabsSection = () => {
                       <input className="InputWrapper" type="file" name="file" />
                     </Stack>
                     {Object.entries(newCert).map(([key, value]) => {
-                      if (key === "contractId") return null;
+                      if (key === "projectId") return null;
                       else if (key === "contentFormat") {
                         return (
                           <Stack key={key} spacing={1}>
@@ -367,7 +365,7 @@ export const TabsSection = () => {
               </form>
               {downloadUrl && (
                 <DownloadButton
-                  contractId={downloadUrl.contractId}
+                  projectId={downloadUrl.projectId}
                   certId={downloadUrl.certId}
                   contentFormat={newCertificateArgs.contentFormat}
                 />
@@ -378,7 +376,7 @@ export const TabsSection = () => {
         ),
       },
       {
-        tab: <Tab>Update Certificate</Tab>,
+        tab: <Tab key={1}>Update Certificate</Tab>,
         tabPanel: (
           <Stack spacing={4}>
             <Box className="MainBoxWrapper">
@@ -394,7 +392,7 @@ export const TabsSection = () => {
               <Text color={"#000"} ml={6} mb={4}>
                 This method is designed as a retry-method when an issue occurs creating a
                 certificate, but a certificate ID was still generated. A new
-                file, contract ID, and certificate ID are required to update the
+                file, project ID, and certificate ID are required to update the
                 certificate.
               </Text>
                 
@@ -407,7 +405,7 @@ export const TabsSection = () => {
                   <Code className="CodeWrapper">
                     {" "}
                     const certificate = await
-                    mentaportSdk.getCertificate(contractId, certificateId);
+                    mentaportSdk.getCertificate(projectId, certificateId);
                   </Code>
                   <Code className="CodeWrapper">{`const \{ status \} = certificate;`}</Code>
                   <Code className="CodeWrapper">
@@ -426,14 +424,14 @@ export const TabsSection = () => {
                     <SimpleGrid columns={2} spacing={4}>
                       <Stack spacing={1}>
                         <Text lineHeight={1}>
-                          Contract ID:<span style={{ color: "red" }}> *</span>
+                          Project ID:<span style={{ color: "red" }}> *</span>
                         </Text>
                         <Input
                           className="InputWrapper"
-                          title="Enter Your Contract ID"
-                          placeholder="Enter Your Contract ID"
-                          value={contractId}
-                          onChange={handleContractIdChange}
+                          title="Enter Your Project ID"
+                          placeholder="Enter Your Project ID"
+                          value={projectId}
+                          onChange={handleProjectIdChange}
                           isRequired
                         />
                       </Stack>
@@ -464,7 +462,7 @@ export const TabsSection = () => {
                         />
                       </Stack>
                       {Object.entries(newCert).map(([key, value]) => {
-                        if (key === "contractId") return null;
+                        if (key === "projectId") return null;
                         else if (key === "contentFormat") {
                           return (
                             <Stack key={key} spacing={1}>
@@ -557,7 +555,7 @@ export const TabsSection = () => {
 
               {downloadUrl && (
                 <DownloadButton
-                  contractId={downloadUrl.contractId}
+                  projectId={downloadUrl.projectId}
                   certId={downloadUrl.certId}
                 />
               )}
@@ -566,7 +564,7 @@ export const TabsSection = () => {
         ),
       },
       {
-        tab: <Tab>Get Certificates</Tab>,
+        tab: <Tab key={2}>Get Certificates</Tab>,
         tabPanel: (
           <Stack spacing={4} direction="column" align="left">
             <SimpleGrid columns={2} spacing={4}>
@@ -609,17 +607,17 @@ export const TabsSection = () => {
                   <Box className="CodeStackWrapper">
                     <Code className="CodeWrapper">
                       {" "}
-                      await mentaportSdk.getCertificates(contractId,
+                      await mentaportSdk.getCertificates(projectId,
                       certificateId);{" "}
                     </Code>
                   </Box>
                   <Stack spacing={0.5}>
-                    <Text>Contract ID: </Text>
+                    <Text>Project ID: </Text>
                     <Input
                       className="InputWrapper"
-                      placeholder="contract ID"
-                      value={contractId}
-                      onChange={handleContractIdChange}
+                      placeholder="Project ID"
+                      value={projectId}
+                      onChange={handleProjectIdChange}
                     />
                   </Stack>
                   <Stack spacing={0.5}>
@@ -633,7 +631,7 @@ export const TabsSection = () => {
                   </Stack>
                   <Button
                     colorScheme="purple"
-                    onClick={() => onGetCertificatesExample(contractId, certId)}
+                    onClick={() => onGetCertificatesExample(projectId, certId)}
                     isLoading={loading}
                   >
                     Get Certificates
@@ -645,7 +643,7 @@ export const TabsSection = () => {
         ),
       },
       {
-        tab: <Tab>Verify Content</Tab>,
+        tab: <Tab key={3}>Verify Content</Tab>,
         tabPanel: (
           <Stack spacing={4}>
             <Box className="MainBoxWrapper">
@@ -695,12 +693,12 @@ export const TabsSection = () => {
         ),
       },
       {
-        tab: <Tab>Get Contracts</Tab>,
+        tab: <Tab key={4}>Get Projects</Tab>,
         tabPanel: (
           <Box className="MainBoxWrapper">
             <Stack spacing={4} direction="column" align="left">
               <Text fontSize="3xl" fontWeight={600}>
-                Get Contracts
+                Get Projects
               </Text>
               <Text fontSize="md">
                 {" "}
@@ -711,17 +709,17 @@ export const TabsSection = () => {
               <Box className="CodeStackWrapper">
                 <Code className="CodeWrapper">
                   {" "}
-                  const data = await mentaportSdk.getContracts(onlyActive:
+                  const data = await mentaportSdk.getProjects(onlyActive:
                   boolean);
                 </Code>
               </Box>
               <Stack spacing={0.5}>
-                <Text>Only Active Contracts:</Text>
+                <Text>Only Active Projects:</Text>
                 <Select
                   className="InputWrapper"
-                  value={String(onlyActiveContracts)}
+                  value={String(onlyActiveProjects)}
                   onChange={(e) => {
-                    setOnlyActiveContracts(e.target.value === "true");
+                    setOnlyActiveProjects(e.target.value === "true");
                   }}
                 >
                   <option value={"true"}>true</option>
@@ -730,10 +728,10 @@ export const TabsSection = () => {
               </Stack>
               <Button
                 colorScheme="purple"
-                onClick={() => onGetContractsExample()}
+                onClick={() => onGetProjectsExample()}
                 isLoading={loading}
               >
-                Get Contracts
+                Get Projects
               </Button>
             </Stack>
           </Box>
@@ -741,13 +739,13 @@ export const TabsSection = () => {
       },
     ];
   }, [
-    contractId,
+    projectId,
     certId,
     loading,
     downloadUrl,
     updateCertificateArgs,
     newCertificateArgs,
-    onlyActiveContracts,
+    onlyActiveProjects,
   ]);
 
   return (
@@ -798,8 +796,8 @@ export const TabsSection = () => {
             </Text>
           </Box>
           <TabPanels p={0}>
-            {tabs.map(({ tabPanel }) => {
-              return <TabPanel p={0}>{tabPanel}</TabPanel>;
+            {tabs.map(({tabPanel}, index) => {
+              return <TabPanel key={index} p={0}>{tabPanel}</TabPanel>;
             })}
           </TabPanels>
         </Stack>

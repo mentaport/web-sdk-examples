@@ -9,7 +9,6 @@ import {
   VerificationStatus,
   CertificateStatus,
   ICertificateUpdateArg,
-  AITrainingMiningInfo,
 } from '@mentaport/certificates';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -36,6 +35,7 @@ export async function CreateCertificate(data: FormData, initCertificateArgs: ICe
     if (!file) {
       throw new Error('No file uploaded')
     }
+  
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
     const blob = new Blob([buffer], { type: file.type });
@@ -49,17 +49,17 @@ export async function CreateCertificate(data: FormData, initCertificateArgs: ICe
       console.error('There was a problem uploading contnet for certificate')
       return genRes
     }
-    const contractId = initCertificateArgs.contractId;
+    const projectId = initCertificateArgs.projectId;
     const certId = genRes.data.certId;
     let status = genRes.data.status;
-    console.log("creation started", certId)
+    console.log("creation started", genRes.data)
     // 2. Check status until is ready (Pending if successful or NonActive if failed)
-    let resCertStatus = await sdk.getCertificateStatus(contractId, certId);
+    let resCertStatus = await sdk.getCertificateStatus(projectId, certId);
     while (status !== CertificateStatus.Pending &&
       status !== CertificateStatus.NonActive
     ) {
       await sleep(2000);
-      resCertStatus = await sdk.getCertificateStatus(contractId, certId);
+      resCertStatus = await sdk.getCertificateStatus(projectId, certId);
       console.log(resCertStatus)
       if (!resCertStatus.status) {
         console.log('error', resCertStatus)
@@ -82,7 +82,7 @@ export async function CreateCertificate(data: FormData, initCertificateArgs: ICe
     console.log("Now approving certificate");
     // TODO: Before approving, confirm the data from the above call to ensure everything looks good.
     // 3. Approve certificate for it to be ready for download
-    const appRes = await sdk.approveCertificate(initCertificateArgs.contractId, certId, true);
+    const appRes = await sdk.approveCertificate(initCertificateArgs.projectId, certId, true);
     return appRes;
 
   } // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -109,14 +109,14 @@ export async function UpdateCertificate(data: FormData, updateArgs: ICertificate
     const typeInfo = getFileTypeStr(file.type)
 
     updateArgs.contentFormat = typeInfo.format as ContentFormat;
-    
     const sdk = await _getMentaportSDK();
     const genRes = await sdk.updateCertificate(updateArgs, blob);
 
     return genRes;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.log(error)
-    let message = "Error creating certificate"
+    let message = "Error updating certificate"
     if (error.response && error.response.data) {
       message = error.response.data.message
     }
@@ -160,7 +160,6 @@ export async function UpdateCertificate(data: FormData, updateArgs: ICertificate
           status = resVerStatus.data.status.status
         }
       }
-
       return resVerStatus
 
     } // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -175,15 +174,14 @@ export async function UpdateCertificate(data: FormData, updateArgs: ICertificate
   }
 
   // Get Certificates
-  export async function GetCertificates(contractId?: string, certId?: string) {
+  export async function GetCertificates(projectId?: string, certId?: string) {
     try {
       const sdk = await _getMentaportSDK();
-      if (contractId && certId) {
-        const result = await sdk.getCertificates(contractId, certId);
+      if (projectId && certId) {
+        const result = await sdk.getCertificates(projectId, certId);
         console.log(result);
         return result
       }
-      console.log("here")
       const result = await sdk.getCertificates();
       console.log(result);
       return result
@@ -198,16 +196,16 @@ export async function UpdateCertificate(data: FormData, updateArgs: ICertificate
     }
   }
 
-  // Get users contracts to extract certificates
-  export async function GetContracts(activeContracts: boolean) {
+  // Get users projects to extract certificates
+  export async function GetProjects(activeProjects: boolean) {
     try {
       const sdk = await _getMentaportSDK();
-      const result = await sdk.getContracts(activeContracts);
+      const result = await sdk.getProjects(activeProjects);
       console.log(result);
       return result
     } // eslint-disable-next-line @typescript-eslint/no-explicit-any
     catch (error: any) {
-      let message = "Error getting contracts"
+      let message = "Error getting projects"
       if (error.response && error.response.data) {
         message = error.response.data.message
       }
@@ -217,16 +215,16 @@ export async function UpdateCertificate(data: FormData, updateArgs: ICertificate
   }
 
   export async function GetDownloadUrl(
-    contractId: string,
+    projectId: string,
     certId: string,
   ): Promise<IResults<string>> {
     try {
       const sdk = await _getMentaportSDK();
-      const result = await sdk.getDownloadUrl(contractId, certId);
+      const result = await sdk.getDownloadUrl(projectId, certId);
       return result;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      let message = 'Error getting contracts';
+      let message = 'Error getting URL';
       if (error.response && error.response.data) {
         message = error.response.data.message;
       }
