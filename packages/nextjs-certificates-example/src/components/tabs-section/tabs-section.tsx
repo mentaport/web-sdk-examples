@@ -29,8 +29,6 @@ import {
 import {
   useState,
   FunctionComponent,
-  // useEffect,
-  useMemo,
 } from "react";
 import { useFormStatus } from "react-dom";
 
@@ -123,6 +121,28 @@ export const TabsSection = () => {
     setUpdateCertificateArgs({ ...updateCert });
   }
 
+  async function onChangeCreateCertificateKeyValue(
+    key: keyof ICertificateArg,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
+    const value = event.target.value;
+  
+    setNewCertificateArgs((prev) => {
+      const updated = { ...prev, [key]: value };
+      return updated;
+    });
+  }
+  
+
+  async function onChangeUpdateCertificateKeyValue(key: keyof ICertificateArg, event: React.ChangeEvent<HTMLInputElement>) {
+    const value = event.target.value
+    
+    setUpdateCertificateArgs((prev) => {
+      const updated = { ...prev, [key]: value };
+      return updated;
+    });
+  }
+
   /* Begin Example Functions */
   async function onSubmitCreateCertificateExample(data: FormData) {
     setResult("");
@@ -212,8 +232,7 @@ export const TabsSection = () => {
   //   console.log("updateCertificateArgs", updateCertificateArgs);
   // }, [updateCertificateArgs]);
 
-  const tabs: { tab: JSX.Element; tabPanel: JSX.Element }[] = useMemo(() => {
-    return [
+  const tabs: { tab: JSX.Element; tabPanel: JSX.Element }[] = [
       {
         tab: <Tab key={0}>Create Certificate</Tab>,
         tabPanel: (
@@ -275,7 +294,8 @@ export const TabsSection = () => {
                       </Text>
                       <input className="InputWrapper" type="file" name="file" />
                     </Stack>
-                    {Object.entries(newCert).map(([key, value]) => {
+                    {Object.entries(newCert).map(([key, _]) => {
+                      const value = newCertificateArgs[key as keyof ICertificateArg] as string;
                       if (key === "projectId") return null;
                       else if (key === "contentFormat") {
                         return (
@@ -355,7 +375,7 @@ export const TabsSection = () => {
                       return (
                         <Stack key={key} spacing={1}>
                           <Text lineHeight={1}>{key}</Text>
-                          <Input className="InputWrapper" value={value} />
+                          <Input className="InputWrapper" value={value} onChange={onChangeCreateCertificateKeyValue.bind(this, key as keyof ICertificateArg)} />
                         </Stack>
                       );
                     })}
@@ -461,7 +481,8 @@ export const TabsSection = () => {
                           name="file"
                         />
                       </Stack>
-                      {Object.entries(newCert).map(([key, value]) => {
+                      {Object.entries(newCert).map(([key, _]) => {
+                        const value = updateCertificateArgs[key as keyof ICertificateUpdateArg] as string;
                         if (key === "projectId") return null;
                         else if (key === "contentFormat") {
                           return (
@@ -490,7 +511,7 @@ export const TabsSection = () => {
                           );
                         } else if (key === "aiTrainingMiningInfo") {
                           return (
-                            <Stack key={key} spacing={1}>
+                            <Stack spacing={1}>
                               <Text lineHeight={1}>
                                 {key}
                                 <span style={{ color: "red" }}> *</span>
@@ -543,7 +564,7 @@ export const TabsSection = () => {
                         return (
                           <Stack key={key} spacing={1}>
                             <Text lineHeight={1}>{key}</Text>
-                            <Input className="InputWrapper" value={value} />
+                            <Input className="InputWrapper" name={key} value={value} onChange={onChangeUpdateCertificateKeyValue.bind(this, key as keyof ICertificateArg)} />
                           </Stack>
                         );
                       })}
@@ -738,15 +759,6 @@ export const TabsSection = () => {
         ),
       },
     ];
-  }, [
-    projectId,
-    certId,
-    loading,
-    downloadUrl,
-    updateCertificateArgs,
-    newCertificateArgs,
-    onlyActiveProjects,
-  ]);
 
   return (
     <Stack spacing={4}>
