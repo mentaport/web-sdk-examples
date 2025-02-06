@@ -29,6 +29,7 @@ import {
 import {
   useState,
   FunctionComponent,
+  useEffect,
 } from "react";
 import { useFormStatus } from "react-dom";
 
@@ -69,18 +70,18 @@ let updateCert: ICertificateUpdateArg = {
 interface ButtonProps {
   name: string;
 }
-interface DownlaodProps {
+interface DownloadProps {
   projectId: string;
   certId: string;
 }
 export const TabsSection = () => {
   const [loading, setOnLoading] = useState<boolean>(false);
-  const [downloadUrl, setDownloadUrl] = useState<DownlaodProps | null>(null);
+  const [downloadUrl, setDownloadUrl] = useState<DownloadProps>({ projectId: "", certId: "" });
 
   const [result, setResult] = useState<string>("");
   const [certId, setCertId] = useState<string>("");
   const [projectId, setProjectId] = useState<string>(
-    process.env.NEXT_PUBLIC_PROJECT_ID!
+    process.env.NEXT_PUBLIC_PROJECT_ID || ""
   );
   const [onlyActiveProjects, setOnlyActiveProjects] = useState<boolean>(true);
   const [newCertificateArgs, setNewCertificateArgs] = useState<ICertificateArg>(
@@ -119,6 +120,7 @@ export const TabsSection = () => {
     setCertId("");
     setNewCertificateArgs({ ...newCert });
     setUpdateCertificateArgs({ ...updateCert });
+    setDownloadUrl({ projectId: "", certId: "" });
   }
 
   async function onChangeCreateCertificateKeyValue(
@@ -146,7 +148,7 @@ export const TabsSection = () => {
   /* Begin Example Functions */
   async function onSubmitCreateCertificateExample(data: FormData) {
     setResult("");
-    setDownloadUrl(null);
+    setDownloadUrl({ projectId: "", certId: "" });
     setOnLoading(true);
 
     const res = await CreateCertificate(data, newCertificateArgs);
@@ -165,7 +167,7 @@ export const TabsSection = () => {
   }
   async function onUpdateCertificateExample(data: FormData) {
     setResult("");
-    setDownloadUrl(null);
+    setDownloadUrl({ projectId: "", certId: "" });
     setOnLoading(true);
 
     const res = await UpdateCertificate(data, updateCertificateArgs);
@@ -227,10 +229,6 @@ export const TabsSection = () => {
       </Button>
     );
   };
-
-  // useEffect(() => {
-  //   console.log("updateCertificateArgs", updateCertificateArgs);
-  // }, [updateCertificateArgs]);
 
   const tabs: { tab: JSX.Element; tabPanel: JSX.Element }[] = [
       {
@@ -481,12 +479,12 @@ export const TabsSection = () => {
                           name="file"
                         />
                       </Stack>
-                      {Object.entries(newCert).map(([key, _]) => {
+                      {Object.entries(newCert).map(([key, _], index) => {
                         const value = updateCertificateArgs[key as keyof ICertificateUpdateArg] as string;
                         if (key === "projectId") return null;
                         else if (key === "contentFormat") {
                           return (
-                            <Stack key={key} spacing={1}>
+                            <Stack key={index} spacing={1}>
                               <Text lineHeight={1}>{key}</Text>
                               <Select
                                 className="InputWrapper"
@@ -499,9 +497,9 @@ export const TabsSection = () => {
                                   });
                                 }}
                               >
-                                {Object.values(ContentFormat).map((format) => {
+                                {Object.values(ContentFormat).map((format, formatIndex) => {
                                   return (
-                                    <option key={format} value={format}>
+                                    <option key={formatIndex} value={format}>
                                       {format}
                                     </option>
                                   );
@@ -511,7 +509,7 @@ export const TabsSection = () => {
                           );
                         } else if (key === "aiTrainingMiningInfo") {
                           return (
-                            <Stack spacing={1}>
+                            <Stack key={index} spacing={1}>
                               <Text lineHeight={1}>
                                 {key}
                                 <span style={{ color: "red" }}> *</span>
@@ -530,9 +528,9 @@ export const TabsSection = () => {
                                 }}
                               >
                                 {Object.values(AITrainingMiningInfo).map(
-                                  (info) => {
+                                  (info, infoIndex) => {
                                     return (
-                                      <option key={info} value={info}>
+                                      <option key={infoIndex} value={info}>
                                         {info}
                                       </option>
                                     );
@@ -543,7 +541,7 @@ export const TabsSection = () => {
                           );
                         } else if (key === "usingAI") {
                           return (
-                            <Stack key={key} spacing={1}>
+                            <Stack key={index} spacing={1}>
                               <Text lineHeight={1}>{key}</Text>
                               <Select
                                 className="InputWrapper"
@@ -562,7 +560,7 @@ export const TabsSection = () => {
                           );
                         }
                         return (
-                          <Stack key={key} spacing={1}>
+                          <Stack key={index} spacing={1}>
                             <Text lineHeight={1}>{key}</Text>
                             <Input className="InputWrapper" name={key} value={value} onChange={onChangeUpdateCertificateKeyValue.bind(this, key as keyof ICertificateArg)} />
                           </Stack>
