@@ -2,3 +2,5 @@ node_modules/
 .DS_Store
 .vscode/
 .npmrc
+packages/nextjs-projects-example/.env
+/packages/nextjs-projects-example/.next

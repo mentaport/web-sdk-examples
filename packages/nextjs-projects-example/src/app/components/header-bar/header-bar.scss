@@ -1,0 +1,45 @@
+.HeaderBarWrapper {
+  height: 90px;
+  position: sticky;
+  width: 100%;
+  top: -1px;
+  margin-bottom: 15px;
+  z-index: 10;
+  background: #1ec5c52c;
+  backdrop-filter: blur(6px);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+
+  .HeaderBar {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+
+    .LogoContainer {
+      display: inline-flex;
+      cursor: pointer;
+      justify-self: center;
+      align-self: center;
+      text-align: center;
+      gap: 0.5rem;
+
+      .LogoImage {
+        margin: auto;
+      }
+
+      @media only screen and (max-width: 720px) {
+        justify-content: flex-start;
+        margin-left: 0.5rem;
+
+        .LogoImage {
+          width: 6rem;
+          height: auto;
+        }
+      }
+    }
+  }
+
+
+}
