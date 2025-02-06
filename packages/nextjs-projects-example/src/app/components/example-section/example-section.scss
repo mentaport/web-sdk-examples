@@ -1,0 +1,97 @@
+.ExampleSection {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 1.5rem 2.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+    gap: 25px;
+    background-color: rgba(0, 0, 0, 0.45);
+    box-shadow: 0 0 11px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 1000px;
+
+    .Title {
+        font-size: 2rem;
+        font-weight: 500;
+        margin: 10px 0 10px;
+        color: #eee;
+        line-height: 1;
+    }
+ 
+    .Description {
+        font-size: 1.15rem;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.7);
+        white-space: pre-wrap;
+    }
+
+    .Error {
+        font-size: 1rem;
+        font-weight: 400;
+        color: #ff5252;
+        width: 100%;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .CodeSnippet {
+        background: rgba(0, 0, 0, 0.347);
+        padding: 1rem 2rem;
+        border-radius: .4rem;
+        border: 1px solid rgba(65, 0, 144, 0.351);
+        width: 100%;
+        font-size: 0.85rem;
+        color: #fff;
+    }
+
+    .SubmitButton {
+        background: linear-gradient(-45deg, #8239ff, #1ec5c595);
+        color: #ddd;
+        font-size: 1.2rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        user-select: none;
+        cursor: pointer;
+        width: 100%;
+        height: 40px;
+        border-radius: 0.6rem;
+        transition: all 0.2s ease;
+
+        &:active {
+            transform: scale(0.98);
+        }
+
+        &:hover {
+            // add border but inset
+            box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.25);
+        }
+
+        &.Disabled {
+            filter: opacity(0.5);
+            cursor: not-allowed;
+        }
+    }
+
+    .Input {
+        background: rgba(0, 0, 0, 0.347);
+        padding: 0.5rem 1rem;
+        border-radius: .4rem;
+        border: 2px solid rgba(65, 0, 144, 0.251);
+        width: 100%;
+        font-size: 1rem;
+        color: #fff;
+
+        &:hover {
+            border: 2px solid rgba(159, 81, 255, 0.5);
+        }
+    }
+
+}
