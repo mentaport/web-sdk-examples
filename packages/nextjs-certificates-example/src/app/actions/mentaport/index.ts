@@ -138,9 +138,7 @@ export async function UpdateCertificate(data: FormData, updateArgs: ICertificate
       const sdk = await _getMentaportSDK();
       const url = "http://examples.mentaport.com/upload";
       // 1. Verify content by uploading content
-      console.log("jer 1e")
       const verRes = await sdk.verifyContent(typeInfo.format, url, blob);
-      console.log('d', verRes)
       // check for result:
       if (!verRes.status || !verRes.data) {
         return verRes
