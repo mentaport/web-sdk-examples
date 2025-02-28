@@ -9,7 +9,11 @@ Inside the package folder, you will find all the tutorials.
 - Certificates SDK Quick Intro: *[nextjs-certificates-example]*
   - How to get started with Mentaport's SDK in a Nextjs application
   - This example goes through all the functions currently in beta and explains how to use them (create, verify, report).
-   
+  - For more info check the docs: https://docs.mentaport.com/docs/SDKs/Certificates%20SDK/overview
+- Certificates Project Admin SDK Quick Intro: *[nextjs-projects-example]*
+   - If you are a Project admin, this is how to get started creating projects and managing them for your users.
+    - This example goes through all the functions currently in beta and explains how to use them (add project, assign owner of project, modify etc).
+  - For more info check the docs: https://docs.mentaport.com/docs/SDKs/Certificates%20Project%20Admin%20SDK/overview
 
 ## API Key
 Please send us an email to developer@mentaport.com to get your API key
