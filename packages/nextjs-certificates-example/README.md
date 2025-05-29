@@ -9,7 +9,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 You will find how to initialize the SDK, call all the main functions, and visualize the results inside
 `src/app/actions/mentaport`. Code for UI and input handling can be found inside `src/components/tab-section`.
 
-> Using Latest SDK Version: [`1.3.0-alpha.1`](https://www.npmjs.com/package/@mentaport/certificates)
+> Using Latest SDK Version: [`1.3.0-alpha.5`](https://www.npmjs.com/package/@mentaport/certificates)
 > NodeJS: v18.0+
 
 ## Environment Variables
@@ -49,21 +49,25 @@ To interact with the Example, open [http://localhost:3000](http://localhost:3000
 
 ## Example Usage
 
-There are 5 SDK usage examples to interact with.
+There are 5 SDK usage examples to interact with:
 
     1. Create a New certificate
-    2, Update a Failed/Non-Active Certificate
-    3. Fetch Existing Certificate(s)
+    2. Update a Failed/Non-Active Certificate
+    3. Get Existing Certificate(s)
+      - Get total count of certificates
+      - Get all certificates
+      - Get certificates with optional parameters 
+          (pagination, by id etc)
     4. Verify Downloaded Content
-    5. Fetch My Project(s)
+    5. Get My Project(s)
 
-#### Creating a New Certificate
+### Creating a New Certificate
 
 This example lets you interact will all required and optional parameters to create a new certificate using your project ID and API Key.
 
 ![create certificate example](img/example-create.png)
 
-#### Updating a Failed/Non-Active Certificate
+### Updating a Failed/Non-Active Certificate
 
 This example lets you interact with updating a certificate that failed to approve due to pre-existing certificate/internal error.
 
@@ -88,5 +92,8 @@ This example demonstates an example usage and results of fetching for the existi
 ![fetch projects example](img/example-projects.png)
 
 ## Support
-
 [Mentaport Documentation](https://docs.mentaport.com)
+
+[Join us on Telegram](https://t.me/+JtMHlFyUaJwwY2Nh)
+
+[Join us on Discord](https://discord.gg/cU8ERmAMKZ)

@@ -7,7 +7,6 @@ export async function _getMentaportSDK(): Promise<CertificateSDK> {
   if (_mentaportSDK != null) {
     return _mentaportSDK;
   }
- 
   return await _initMentaportSdk();
 }
 
@@ -18,7 +17,6 @@ async function _initMentaportSdk() {
       'It is not possible to create a CertificateSDK due to an initialization problem.'
     );
   }
-
   _mentaportSDK.setClient();
   return _mentaportSDK;
 }

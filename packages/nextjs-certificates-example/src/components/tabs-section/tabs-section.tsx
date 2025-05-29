@@ -14,6 +14,7 @@ import {
   Verify,
   GetCertificates,
   GetProjects,
+  GetTotalCertificates,
   UpdateCertificate,
 } from "@/app/actions/mentaport/index";
 import { DownloadButton } from "@/components/buttons/download-button";
@@ -29,7 +30,6 @@ import {
 import {
   useState,
   FunctionComponent,
-  useEffect,
 } from "react";
 import { useFormStatus } from "react-dom";
 
@@ -83,6 +83,8 @@ export const TabsSection = () => {
   const [projectId, setProjectId] = useState<string>(
     process.env.NEXT_PUBLIC_PROJECT_ID || ""
   );
+  const [limit, setLimit] = useState<number>(10);
+  const [cursor, setCursor] = useState<string>("");
   const [onlyActiveProjects, setOnlyActiveProjects] = useState<boolean>(true);
   const [newCertificateArgs, setNewCertificateArgs] = useState<ICertificateArg>(
     { ...newCert }
@@ -112,6 +114,16 @@ export const TabsSection = () => {
       ...updateCertificateArgs,
       projectId: event.target.value,
     });
+  };
+
+  const handleLimitChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLimit(Number(event.target.value));
+    setResult("");
+  };
+
+  const handleCursorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCursor(event.target.value);
+    setResult("");
   };
 
   function handleTabChange() {
@@ -200,13 +212,24 @@ export const TabsSection = () => {
     const executionTime = endTime - startTime;
     console.log("executionTime", executionTime);
   }
-  async function onGetCertificatesExample(
-    projectId?: string,
-    certId?: string
-  ) {
+  async function onGetCertificatesExample(all:boolean) {
     setResult("");
     setOnLoading(true);
-    const res = await GetCertificates(projectId, certId);
+    let res;
+    if(all){
+      res = await GetCertificates();
+    }else{
+      res = await GetCertificates({projectId, certId, limit, cursor});
+    }
+    
+    setOnLoading(false);
+    if (res.status) setResult(JSON.stringify(res.data, null, 2));
+    else setResult(res.message);
+  }
+  async function onGetTotalCertificatesExample() {
+    setResult("");
+    setOnLoading(true);
+    const res = await GetTotalCertificates(projectId);
     setOnLoading(false);
     if (res.status) setResult(JSON.stringify(res.data, null, 2));
     else setResult(res.message);
@@ -292,7 +315,7 @@ export const TabsSection = () => {
                       </Text>
                       <input className="InputWrapper" type="file" name="file" />
                     </Stack>
-                    {Object.entries(newCert).map(([key, _]) => {
+                    {Object.entries(newCert).map(([key]) => {
                       const value = newCertificateArgs[key as keyof ICertificateArg] as string;
                       if (key === "projectId") return null;
                       else if (key === "contentFormat") {
@@ -479,7 +502,7 @@ export const TabsSection = () => {
                           name="file"
                         />
                       </Stack>
-                      {Object.entries(newCert).map(([key, _], index) => {
+                      {Object.entries(newCert).map(([key], index) => {
                         const value = updateCertificateArgs[key as keyof ICertificateUpdateArg] as string;
                         if (key === "projectId") return null;
                         else if (key === "contentFormat") {
@@ -597,7 +620,7 @@ export const TabsSection = () => {
                 >
                   <Stack spacing={4}>
                     <Text fontSize="3xl" fontWeight={600}>
-                      Get All Certificates
+                      Get all certificates
                     </Text>
                     <Box className="CodeStackWrapper">
                       <Code className="CodeWrapper">
@@ -609,48 +632,95 @@ export const TabsSection = () => {
                   <Stack justifyContent={"space-between"} h={"100%"}>
                     <Button
                       colorScheme="purple"
-                      onClick={() => onGetCertificatesExample()}
+                      onClick={() => onGetCertificatesExample(true)}
                       isLoading={loading}
                     >
                       Get Certificates
                     </Button>
                   </Stack>
+
+                  <Stack spacing={4}>
+                    <Text fontSize="3xl" fontWeight={600}>
+                      Get total certificates count
+                    </Text>
+                    <Box className="CodeStackWrapper">
+                      <Code className="CodeWrapper">
+                        {" "}
+                        await mentaportSdk.getTotalCertificates(projectId?);
+                      </Code>
+                    </Box>
+                    <Stack spacing={0.5}>
+                    <Text>Project Id: </Text>
+                    <Input
+                      className="InputWrapper"
+                      placeholder="Project Id"
+                      value={projectId}
+                      onChange={handleProjectIdChange}
+                    />
+                  </Stack>
+                  </Stack>
+                  <Stack justifyContent={"space-between"} h={"100%"}>
+                    <Button
+                      colorScheme="purple"
+                      onClick={() => onGetTotalCertificatesExample()}
+                      isLoading={loading}
+                    >
+                      Get total certificates
+                    </Button>
+                  </Stack>
                 </Stack>
+                
               </Box>
 
               <Box className="MainBoxWrapper">
                 <Stack spacing={4} direction="column" align="left">
                   <Text fontSize="3xl" fontWeight={600}>
-                    Get Certificate by ID
+                    Get certificates with optional parameters
                   </Text>
                   <Box className="CodeStackWrapper">
                     <Code className="CodeWrapper">
-                      {" "}
-                      await mentaportSdk.getCertificates(projectId,
-                      certificateId);{" "}
+                      {`await mentaportSdk.getCertificates ({projectId?,certId?, limit?, cursor?});`}
                     </Code>
                   </Box>
                   <Stack spacing={0.5}>
-                    <Text>Project ID: </Text>
+                    <Text>Project Id: </Text>
                     <Input
                       className="InputWrapper"
-                      placeholder="Project ID"
+                      placeholder="Project Id"
                       value={projectId}
                       onChange={handleProjectIdChange}
                     />
                   </Stack>
                   <Stack spacing={0.5}>
-                    <Text>Certificate ID:</Text>
+                    <Text>Certificate Id:</Text>
                     <Input
                       className="InputWrapper"
-                      placeholder="certificate ID"
+                      placeholder="Certificate Id"
                       value={certId}
                       onChange={handleCertIdChange}
                     />
                   </Stack>
+                  <Stack spacing={0.5}>
+                    <Text>Limit of certificates:</Text>
+                    <Input
+                      className="InputWrapper"
+                      placeholder="Limit of certificates"
+                      value={limit}
+                      onChange={handleLimitChange}
+                    />
+                  </Stack>
+                  <Stack spacing={0.5}>
+                    <Text>Cursor for pagination:</Text>
+                    <Input
+                      className="InputWrapper"
+                      placeholder="Cursor"
+                      value={cursor}
+                      onChange={handleCursorChange}
+                    />
+                  </Stack>
                   <Button
                     colorScheme="purple"
-                    onClick={() => onGetCertificatesExample(projectId, certId)}
+                    onClick={() => onGetCertificatesExample(false)}
                     isLoading={loading}
                   >
                     Get Certificates

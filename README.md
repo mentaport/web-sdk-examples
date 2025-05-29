@@ -29,3 +29,8 @@ Each example has an empty *.env* file for you to add your API key and other vari
 
 ## Docs:
 **Don't forget to check out https://docs.mentaport.com**
+
+## Support
+[Join us on Telegram](https://t.me/+JtMHlFyUaJwwY2Nh)
+
+[Join us on Discord](https://discord.gg/cU8ERmAMKZ)

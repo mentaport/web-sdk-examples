@@ -172,11 +172,12 @@ export async function UpdateCertificate(data: FormData, updateArgs: ICertificate
   }
 
   // Get Certificates
-  export async function GetCertificates(projectId?: string, certId?: string) {
+  export async function GetCertificates(options?: {projectId?:
+     string, certId?: string, limit?: number, cursor?: string}) {
     try {
       const sdk = await _getMentaportSDK();
-      if (projectId && certId) {
-        const result = await sdk.getCertificates(projectId, certId);
+      if (options) {
+        const result = await sdk.getCertificates(options);
         console.log(result);
         return result
       }
@@ -186,6 +187,23 @@ export async function UpdateCertificate(data: FormData, updateArgs: ICertificate
     }  // eslint-disable-next-line @typescript-eslint/no-explicit-any
     catch (error: any) {
       let message = "Error getting certificates"
+      if (error.response && error.response.data) {
+        message = error.response.data.message
+      }
+      console.log(error)
+      return { status: false, message, statusCode: 501 }
+    }
+  }
+  // Get total certificates
+  export async function GetTotalCertificates(projectId?: string) {
+    try {
+      const sdk = await _getMentaportSDK();
+      const result = await sdk.getTotalCertificates(projectId);
+      console.log(result);
+      return result
+    } // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (error: any) {
+      let message = "Error getting total certificates"
       if (error.response && error.response.data) {
         message = error.response.data.message
       }
